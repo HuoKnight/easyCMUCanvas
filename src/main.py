@@ -12,7 +12,7 @@ from tkinter import colorchooser
     # - Add custom cursors to canvas; Fleur for shape resizing, pirate for removing, spraycan for color filling | Done
     # - Add fill button | DONE
     # - Make button images work | DONE
-    # - Add ability to create shapes at specific coordinates
+    # - Add ability to create shapes at specific coordinates 
 
 class EasyCMUCanvas():
     def __init__(self):
