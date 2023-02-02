@@ -1,4 +1,6 @@
 from tkinter import *
+#from PIL import ImageTk, Image
+
 
     # TODO: 
     # - Create ID system so that each visual rectangle has an incremented ID, and rectangles that are created and then deleted
@@ -6,6 +8,8 @@ from tkinter import *
     # - Include this for all shapes
     # - Add remove tool | DONE
     # - Add custom cursors to canvas; Fleur for shape resizing, pirate for removing, spraycan for color filling
+    # - Add fill button
+    # - Make button images work
 
 class EasyCMUCanvas():
     def __init__(self):
@@ -17,6 +21,7 @@ class EasyCMUCanvas():
         self.oval = None
         self.current_tag = -1
 
+        self.fill_bucket_photo = PhotoImage(file='./img/fill_bucket.png')
 
         self.layout = Frame(self.root)
         self.layout.grid(row=0, column=0)
@@ -31,14 +36,25 @@ class EasyCMUCanvas():
 
         self.rectButton = Button(self.button_layout, text='▮', font=('Arial', 25), width=1, height=1, command=lambda: self.selectTool('rect')).grid(row=0, column=0)   
         self.removeButton = Button(self.button_layout, text='✕', fg='red', font=('Arial', 25), width=1, height=1, command=lambda: self.selectTool('remove')).grid(row=1, column=0)
+        self.fillButton = Button(self.button_layout, image=self.fill_bucket_photo, compound='top', font=('Arial', 25), width=40, height=40, command=lambda: self.selectTool('fill')).grid(row=2, column=0)
+        
         
 
         self.root.mainloop()
 
 
 
+    # def loadImage(self, path):
+    #     img = Image.open(file=path)
+    #     resize_img = img.resize((600, 600), Image.ANTIALIAS)
+    #     return ImageTk.PhotoImage(resize_img)
+
     def selectTool(self, tool):
         self.tool = tool
+        if tool == 'remove':
+            self.canvas.config(cursor='pirate')
+        elif tool == 'rect':
+            self.canvas.config(cursor='fleur')
 
     def getMousePos(self, event):
         self.start_x = event.x
