@@ -1,11 +1,20 @@
 from tkinter import *
 
+    # TODO: 
+    # - Create ID system so that each visual rectangle has an incremented ID, and rectangles that are created and then deleted
+    #   during resizing do not effect the ID count.
+    # - Include this for all shapes
+    # - Add remove tool
+    # - Add custom cursors to canvas
+
 class EasyCMUCanvas():
     def __init__(self):
         self.root = Tk()
         self.root.wm_title("Easy CMU Canvas")
+        self.root.resizable(False, False)
         self.tool = 'rect'
         self.rect = None
+        self.current_id = 0
 
 
         self.layout = Frame(self.root)
@@ -33,15 +42,20 @@ class EasyCMUCanvas():
     def getMousePos(self, event):
         self.start_x = event.x
         self.start_y = event.y
-    
+        if self.tool != 'remove':
+            self.current_id += 1
+
     def mouseDrag(self, event):
         if self.tool == 'rect':
             if self.rect:
-                print("-------", self.rect)
+                self.current_id -= 1
+                print(self.current_id, ';', self.rect)
                 self.canvas.delete(self.rect)
             current_x = event.x
             current_y = event.y
-            self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, current_x, current_y)
+            self.current_id += 1
+            self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, current_x, current_y, tag=self.current_id)
+            
     
     def mouseRelease(self, event):
         if self.tool == 'rect':
