@@ -7,12 +7,20 @@ from tkinter import colorchooser
     # - Create ID system so that each visual rectangle has an incremented ID, and rectangles that are created and then deleted
     #   during resizing do not effect the ID count. | DONE
     # - Add all shapes
+    #   - Rectangle | DONE
+    #   - Oval | DONE
+    #   - Polygon | DONE
+    #   - Circle
+    #   - Star
+    #   - Line
+    #   - Label
+    #   - Arc
     # - Include id system for all shapes
     # - Add remove tool | DONE
     # - Add custom cursors to canvas; Fleur for shape resizing, pirate for removing, spraycan for color filling | Done
     # - Add fill button | DONE
     # - Make button images work | DONE
-    # - Add ability to create shapes at specific coordinates 
+    # - Add ability to create shapes at specific coordinates
 
 class EasyCMUCanvas():
     def __init__(self):
@@ -24,16 +32,26 @@ class EasyCMUCanvas():
         self.tooltip.overrideredirect(True)
         self.tooltip_label = Label(self.tooltip, text="", background="lightyellow", relief="solid", borderwidth=1)
         self.tooltip_label.pack()
+
         self.tool = 'shape'
-        self.rect = None
-        self.oval = None
-        self.current_tag = -1
         self.shape = 'rect'
         self.color = '#000000'
+
+        self.rect = None
+        self.oval = None
+        self.polygon = []
+        self.first_point = False
+        self.polyLine = None
+        self.polyLines = []
+
+        self.current_tag = -1
+        
+        
 
         self.polygonMenu = Menu(self.root, tearoff=0)
         self.polygonMenu.add_command(label='Rect', command=lambda: self.choosePolygon('rect'))
         self.polygonMenu.add_command(label='Oval', command=lambda: self.choosePolygon('oval'))
+        self.polygonMenu.add_command(label='Polygon', command=lambda: self.choosePolygon('polygon'))
 
         self.fill_bucket_photo = PhotoImage(file='./img/fill_bucket.png')
         self.gradient_photo = PhotoImage(file='./img/gradient.png')
@@ -47,6 +65,7 @@ class EasyCMUCanvas():
         self.canvas.bind("<Button-1>", self.getMousePos)
         self.canvas.bind("<B1-Motion>", self.mouseDrag)
         self.canvas.bind("<ButtonRelease-1>", self.mouseRelease)
+        self.canvas.bind("<Motion>", self.mouseMove)
         self.canvas.grid(row=1, column=1)
 
         self.shapeButton = Button(self.button_layout, text='★', font=('Arial', 25), width=1, height=1, command=lambda: self.selectTool('shape'))
@@ -100,6 +119,19 @@ class EasyCMUCanvas():
         self.start_y = event.y
         if self.tool == 'shape':
             self.current_tag += 1
+            if self.shape == 'polygon':
+                if self.polygon == []:
+                    self.first_point = True
+                self.polygon.append(self.start_x)
+                self.polygon.append(self.start_y)
+                if self.polyLine:
+                    self.polyLines.append(self.canvas.create_line(self.canvas.coords(self.polyLine)))
+                if ((self.polygon[-2] - self.polygon[0]) <= 2 and (self.polygon[-1] - self.polygon[1]) <= 2) and len(self.polygon) > 4:
+                    self.canvas.create_polygon(self.polygon, tags='a' + str(self.current_tag))
+                    self.first_point = False
+                    self.polygon = []
+                    for line in self.polyLines:
+                        self.canvas.delete(line)
         elif self.tool == 'remove':
             for shape_id in [id for id in range(self.current_tag + 1)]:
                 tag = 'a' + str(shape_id)
@@ -125,6 +157,13 @@ class EasyCMUCanvas():
                 if self.oval:
                     self.canvas.delete('a' + str(self.current_tag))
                 self.oval = self.canvas.create_oval(self.start_x, self.start_y, event.x, event.y, tags='a' + str(self.current_tag))
+    
+    def mouseMove(self, event):
+        if self.first_point:
+            if self.polyLine:
+                self.canvas.delete(self.polyLine)
+            self.polyLine = self.canvas.create_line(event.x, event.y, self.polygon[-2], self.polygon[-1])
+        
             
     
     def mouseRelease(self, event):
@@ -132,7 +171,7 @@ class EasyCMUCanvas():
             self.rect = None
 
     def collides(self, mouse_x, mouse_y, coords):
-        print(coords, ';', mouse_x, ',', mouse_y)
+        #print(coords, ';', mouse_x, ',', mouse_y)
         if coords != []:
             if (mouse_x >= coords[0] and mouse_x <= coords[2]) and (mouse_y >= coords[1] and mouse_y <= coords[3]):
                 return True
@@ -150,17 +189,23 @@ class EasyCMUCanvas():
         self.tooltip.withdraw()
     
     def fillShape(self, shape, coords, tag):
+        print(shape, ';', coords)
         self.canvas.delete(tag)
         if shape == 'rectangle':
             if self.color == '#ffffff':
-                self.canvas.create_rectangle(coords[0], coords[1], coords[2], coords[3], tags=tag, fill=self.color)
+                self.canvas.create_rectangle(coords, tags=tag, fill=self.color)
             else:
-                self.canvas.create_rectangle(coords[0], coords[1], coords[2], coords[3], tags=tag, fill=self.color, width=0)
+                self.canvas.create_rectangle(coords, tags=tag, fill=self.color, width=0)
         elif shape == 'oval':
             if self.color == '#ffffff':
-                self.canvas.create_oval(coords[0], coords[1], coords[2], coords[3], tags=tag, fill=self.color)
+                self.canvas.create_oval(coords, tags=tag, fill=self.color)
             else:
-                self.canvas.create_oval(coords[0], coords[1], coords[2], coords[3], tags=tag, fill=self.color, width=0)
+                self.canvas.create_oval(coords, tags=tag, fill=self.color, width=0)
+        elif shape == 'polygon':
+            if self.color == '#ffffff':
+                self.canvas.create_polygon(coords, tags=tag, fill=self.color)
+            else:
+                self.canvas.create_polygon(coords, tags=tag, fill=self.color, width=0)
 
 
         
