@@ -21,6 +21,7 @@ from tkinter import colorchooser
     # - Add fill button | DONE
     # - Make button images work | DONE
     # - Add ability to create shapes at specific coordinates
+    # - ADD COMMENTS
 
 class EasyCMUCanvas():
     def __init__(self):
