@@ -25,8 +25,8 @@ from tkinter import colorchooser
     # - ADD COMMENTS
 
 
-# The main class of the application, creates an instance of Tkinter
-# and sets up the layout and buttons of the canvas
+"""The main class of the application, creates a tkinter instance
+and sets up the layout and buttons of the canvas"""
 class EasyCMUCanvas():
     def __init__(self):
         # Create Tkinter instance and set window title
@@ -141,7 +141,7 @@ class EasyCMUCanvas():
     def selectTool(self, tool):
         self.tool = tool
         if tool == 'remove':
-            self.canvas.config(cursor='pirate')
+            self.canvas.config(cursor='X_cursor')
         elif tool == 'shape':
             self.canvas.config(cursor='fleur')
         elif tool == 'fill':
