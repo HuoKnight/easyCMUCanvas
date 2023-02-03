@@ -18,7 +18,7 @@ from tkinter import colorchooser
     #   - Arc
     # - Include id system for all shapes
     # - Add remove tool | DONE
-    # - Add custom cursors to canvas; Fleur for shape resizing, pirate for removing, spraycan for color filling | Done
+    # - Add custom cursors to canvas; Fleur for shape resizing, pirate for removing, spraycan for color filling | DONE
     # - Add fill button | DONE
     # - Make button images work | DONE
     # - Add ability to create shapes at specific coordinates
